@@ -1,7 +1,7 @@
 {
   "headers": [
     {
-      "source": "**/*.cook",
+      "source": "**/*.{cook,rcp}",
       "headers": [
         { "key": "Content-Type", "value": "text/plain; charset=utf-8" }
       ]
