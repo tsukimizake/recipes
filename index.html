@@ -7574,10 +7574,10 @@ var $author$project$Layout$compute = F5(
 			$elm$core$List$maximum(
 				$elm$core$Dict$values(asap)));
 		var layerOfReal = function (n) {
-			return hMax - A2(
+			return A2(
 				$elm$core$Maybe$withDefault,
 				0,
-				A2($elm$core$Dict$get, n, toSink));
+				A2($elm$core$Dict$get, n, asap));
 		};
 		var _v0 = A2($author$project$Layout$buildChains, layerOfReal, validEdges);
 		var chains = _v0.a;

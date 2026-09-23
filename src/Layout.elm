@@ -52,7 +52,7 @@ type alias Chain =
     }
 
 
-{-| 層割り当ては ALAP (できるだけ消費側に近い層)。長い辺は負のIDのダミーノードで分割し、
+{-| 層割り当ては ASAP (依存が解けた直後の層)。長い辺は負のIDのダミーノードで分割し、
 層内の並び順はバリセンタ法で決める。1単位 = nodeW + gapX。
 -}
 compute : Config -> List Int -> Dict Int Float -> List Edge -> Maybe Int -> Layout
@@ -86,7 +86,7 @@ compute cfg ids heights edges result =
             Dict.values asap |> List.maximum |> Maybe.withDefault 0
 
         layerOfReal n =
-            hMax - (Dict.get n toSink |> Maybe.withDefault 0)
+            Dict.get n asap |> Maybe.withDefault 0
 
         ( chains, dummyInfo ) =
             buildChains layerOfReal validEdges
