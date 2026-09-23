@@ -9956,8 +9956,6 @@ var $author$project$Main$update = F2(
 					$author$project$Main$setDone,
 					A2($elm$core$Set$member, id, model.i) ? A2($elm$core$Set$remove, id, model.i) : A2($elm$core$Set$insert, id, model.i),
 					model);
-			case 5:
-				return A2($author$project$Main$setDone, $elm$core$Set$empty, model);
 			default:
 				var file = msg.a;
 				return _Utils_Tuple2(
@@ -9977,7 +9975,7 @@ var $elm$html$Html$Attributes$stringProperty = F2(
 			$elm$json$Json$Encode$string(string));
 	});
 var $elm$html$Html$Attributes$class = $elm$html$Html$Attributes$stringProperty('className');
-var $author$project$Main$css = '\u000Abody { margin: 0; font-family: -apple-system, \u0022Hiragino Sans\u0022, \u0022Noto Sans JP\u0022, sans-serif; color: #0b0b0b; background: #fcfcfb; }\u000A.app { width: max-content; min-width: 100%; }\u000Aheader { position: sticky; top: 0; left: 0; z-index: 1; box-sizing: border-box; width: 100%; max-width: 100vw; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px; padding: 6px 12px; background: #fcfcfb; border-bottom: 1px solid #e5e4e0; font-size: 12px; }\u000Ah1 { font-size: 15px; margin: 0; }\u000A.meta { color: #52514e; }\u000A.notes summary { cursor: pointer; color: #52514e; }\u000A.notes[open] { flex-basis: 100%; }\u000A.notes ul { margin: 4px 0 0; padding-left: 1.2em; color: #52514e; }\u000A.legend { display: flex; gap: 10px; flex-wrap: wrap; }\u000A.legend-item { display: inline-flex; align-items: center; gap: 4px; }\u000A.dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }\u000A.status { padding: 20px; color: #52514e; }\u000A.error { padding: 20px; color: #d03b3b; white-space: pre-wrap; }\u000A.warn { color: #d03b3b; }\u000Abutton, select { font: inherit; }\u000A';
+var $author$project$Main$css = '\u000Abody { margin: 0; font-family: -apple-system, \u0022Hiragino Sans\u0022, \u0022Noto Sans JP\u0022, sans-serif; color: #0b0b0b; background: #fcfcfb; }\u000A.app { width: max-content; min-width: 100%; }\u000Aheader { position: sticky; top: 0; left: 0; z-index: 1; box-sizing: border-box; width: 100%; max-width: 100vw; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px; padding: 6px 12px; background: #fcfcfb; border-bottom: 1px solid #e5e4e0; font-size: 12px; }\u000Ah1 { font-size: 15px; margin: 0; }\u000A.meta { color: #52514e; }\u000A.notes summary { cursor: pointer; color: #52514e; }\u000A.notes[open] { flex-basis: 100%; }\u000A.notes ul { margin: 4px 0 0; padding-left: 1.2em; color: #52514e; }\u000A.legend { display: flex; gap: 10px; flex-wrap: wrap; }\u000A.legend-item { display: inline-flex; align-items: center; gap: 4px; }\u000A.dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }\u000A.status { padding: 20px; color: #52514e; }\u000A.error { padding: 20px; color: #d03b3b; white-space: pre-wrap; }\u000A.warn { color: #d03b3b; }\u000Aselect { font: inherit; }\u000A';
 var $elm$html$Html$div = _VirtualDom_node('div');
 var $author$project$Rcp$metaGet = F2(
 	function (key, recipe) {
@@ -10000,11 +9998,9 @@ var $elm$virtual_dom$VirtualDom$node = function (tag) {
 var $elm$html$Html$node = $elm$virtual_dom$VirtualDom$node;
 var $elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var $elm$html$Html$text = $elm$virtual_dom$VirtualDom$text;
-var $author$project$Main$ResetDone = {$: 5};
 var $author$project$Main$SelectRecipe = function (a) {
-	return {$: 6, a: a};
+	return {$: 5, a: a};
 };
-var $elm$html$Html$button = _VirtualDom_node('button');
 var $elm$html$Html$details = _VirtualDom_node('details');
 var $elm$core$String$dropRight = F2(
 	function (n, string) {
@@ -10097,29 +10093,13 @@ var $author$project$Main$metaLine = function (recipe) {
 					A2($author$project$Rcp$metaGet, 'source', recipe)
 				])));
 };
-var $elm$virtual_dom$VirtualDom$Normal = function (a) {
-	return {$: 0, a: a};
-};
-var $elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
-var $elm$html$Html$Events$on = F2(
-	function (event, decoder) {
-		return A2(
-			$elm$virtual_dom$VirtualDom$on,
-			event,
-			$elm$virtual_dom$VirtualDom$Normal(decoder));
-	});
-var $elm$html$Html$Events$onClick = function (msg) {
-	return A2(
-		$elm$html$Html$Events$on,
-		'click',
-		$elm$json$Json$Decode$succeed(msg));
-};
 var $elm$html$Html$Events$alwaysStop = function (x) {
 	return _Utils_Tuple2(x, true);
 };
 var $elm$virtual_dom$VirtualDom$MayStopPropagation = function (a) {
 	return {$: 1, a: a};
 };
+var $elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
 var $elm$html$Html$Events$stopPropagationOn = F2(
 	function (event, decoder) {
 		return A2(
@@ -10305,16 +10285,6 @@ var $author$project$Main$viewHeader = function (model) {
 								[
 									$elm$html$Html$text(
 									$elm$core$String$fromInt(doneCount) + (' / ' + ($elm$core$String$fromInt(total) + ' 完了')))
-								])),
-							A2(
-							$elm$html$Html$button,
-							_List_fromArray(
-								[
-									$elm$html$Html$Events$onClick($author$project$Main$ResetDone)
-								]),
-							_List_fromArray(
-								[
-									$elm$html$Html$text('リセット')
 								])),
 							picker
 						]))));
@@ -10633,6 +10603,16 @@ var $author$project$Main$ToggleDone = function (a) {
 };
 var $elm$svg$Svg$Attributes$fontWeight = _VirtualDom_attribute('font-weight');
 var $elm$svg$Svg$g = $elm$svg$Svg$trustedNode('g');
+var $elm$virtual_dom$VirtualDom$Normal = function (a) {
+	return {$: 0, a: a};
+};
+var $elm$html$Html$Events$on = F2(
+	function (event, decoder) {
+		return A2(
+			$elm$virtual_dom$VirtualDom$on,
+			event,
+			$elm$virtual_dom$VirtualDom$Normal(decoder));
+	});
 var $elm$svg$Svg$Events$onClick = function (msg) {
 	return A2(
 		$elm$html$Html$Events$on,

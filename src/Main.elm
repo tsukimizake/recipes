@@ -4,7 +4,7 @@ import Browser
 import Browser.Navigation as Nav
 import Content exposing (Content, contentFor, contentHeight, labelLH, labelSize, layoutConfig, padX, padY, sectionGap, smallLH, smallSize)
 import Dict exposing (Dict)
-import Html exposing (Html, button, div, h1, li, span, text, ul)
+import Html exposing (Html, div, h1, li, span, text, ul)
 import Html.Attributes as HA
 import Html.Events as HE
 import Http
@@ -70,7 +70,6 @@ type Msg
     | GotIndex (Result Http.Error (List String))
     | GotRecipe (Result Http.Error String)
     | ToggleDone Int
-    | ResetDone
     | SelectRecipe String
 
 
@@ -210,9 +209,6 @@ update msg model =
                     Set.insert id model.done
                 )
                 model
-
-        ResetDone ->
-            setDone Set.empty model
 
         SelectRecipe file ->
             ( model, Nav.pushUrl model.key (queryFor file Set.empty) )
@@ -379,7 +375,6 @@ viewHeader model =
                     ++ notes
                     ++ [ div [ HA.class "legend" ] (List.indexedMap legendItem p.phases)
                        , span [ HA.class "count" ] [ text (String.fromInt doneCount ++ " / " ++ String.fromInt total ++ " 完了") ]
-                       , button [ HE.onClick ResetDone ] [ text "リセット" ]
                        , picker
                        ]
                 )
@@ -841,5 +836,5 @@ h1 { font-size: 15px; margin: 0; }
 .status { padding: 20px; color: #52514e; }
 .error { padding: 20px; color: #d03b3b; white-space: pre-wrap; }
 .warn { color: #d03b3b; }
-button, select { font: inherit; }
+select { font: inherit; }
 """
