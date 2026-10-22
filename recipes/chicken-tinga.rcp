@@ -37,18 +37,18 @@
          (-> (tool 中サイズの鍋)
              (op "ラードを入れ、強火で熱する"
                  (ing ラード 30 ml "または植物油")
-                 :heat 強火 :until "油が揺らめく" :phase 鶏肉の焼き付け)
+                 :heat 強火 :until "油が揺らめく" :phase 鶏肉)
              (op "鶏肉を皮目を下にして入れる" 下味鶏肉
-                 :heat 強火 :phase 鶏肉の焼き付け)
+                 :heat 強火 :phase 鶏肉)
              (op "動かさずに焼き、しっかりこんがり色をつける"
                  :time (6 8 min) :attention :partial :heat 強火
                  :note "煙が出すぎたり焦げそうなら火を弱める"
-                 :phase 鶏肉の焼き付け)
+                 :phase 鶏肉)
              (op "裏返してさらに焼く"
                  :time (2 min) :attention :partial :heat 強火
-                 :phase 鶏肉の焼き付け)
+                 :phase 鶏肉)
              (split "鶏肉を大きな皿に取り出す"
-                    :heat 強火 :phase 鶏肉の焼き付け)))
+                    :heat 強火 :phase 鶏肉)))
 
         ;; ---- 野菜の焼き付け〜煮込み: 鍋は火に載ったまま継続 ----
         ((煮えた鶏肉 ソース鍋)
@@ -57,50 +57,50 @@
                  剥いたトマティーヨ
                  (ing 完熟プラムトマト 170 g "中2個ほど")
                  剥いたにんにく
-                 :heat 強火 :phase 野菜の焼き付け)
+                 :heat 強火 :phase ソース)
              (op "ときどき返しながら、焼き色とブリスターがつくまで加熱する"
                  :time (5 min) :attention :partial :heat 強火
-                 :phase 野菜の焼き付け)
+                 :phase ソース)
              (op "玉ねぎを加え、しんなりするまで炒める" 玉ねぎ
-                 :time (2 min) :attention :full :heat 強火 :phase 煮込み)
+                 :time (2 min) :attention :full :heat 強火 :phase ソース)
              (op "オレガノとローリエを加え、香りが立つまで炒める"
                  (ing 乾燥オレガノ 2 小さじ "できればメキシカンオレガノ")
                  (ing ローリエ 2 枚)
-                 :time (30 sec) :attention :full :heat 強火 :phase 煮込み)
+                 :time (30 sec) :attention :full :heat 強火 :phase ソース)
              (op "リンゴ酢と鶏ガラスープを注ぐ"
                  (ing リンゴ酢 30 ml)
                  (ing 鶏ガラスープ 475 ml)
-                 :heat 強火 :phase 煮込み)
+                 :heat 強火 :phase ソース)
              (op "鶏肉を戻し、強火で沸騰させる" 焼けた鶏肉
-                 :heat 強火 :phase 煮込み)
-             (op "ごく弱火に落とし、蓋をする" :heat ごく弱火 :phase 煮込み)
+                 :heat 強火 :phase ソース)
+             (op "ごく弱火に落とし、蓋をする" :heat ごく弱火 :phase ソース)
              (op "ときどき鶏肉を返しながら煮る"
                  :time (20 30 min) :attention :partial :heat ごく弱火
-                 :until "肉の一番厚い部分の中心温度が63℃" :phase 煮込み)
-             (split "鶏肉をボウルに取り出す" :heat ごく弱火 :phase 煮込み)))
+                 :until "肉の一番厚い部分の中心温度が63℃" :phase ソース)
+             (split "鶏肉をボウルに取り出す" :heat ごく弱火 :phase ソース)))
 
         ;; ---- 鶏肉の処理: ソースの仕上げと並列可能なブランチ ----
         (裂いた鶏肉
          (-> 煮えた鶏肉
-             (op "触れる温度まで冷ます" :attention :none :phase 鶏肉の処理)
-             (op "皮と骨を取り除いて捨てる" :phase 鶏肉の処理)
-             (op "肉を細かく裂く" :phase 鶏肉の処理)))
+             (op "触れる温度まで冷ます" :attention :none :phase 鶏肉)
+             (op "皮と骨を取り除いて捨てる" :phase 鶏肉)
+             (op "肉を細かく裂く" :phase 鶏肉)))
 
         ;; ---- ソースの仕上げ ----
         (完成ソース
          (-> ソース鍋
              (op "混ぜながら、ソースが元の量の半分ほどになるまで煮詰める"
                  :time (5 min) :attention :full :heat 強め
-                 :phase ソースの仕上げ)
+                 :phase ソース)
              (op "チポトレとアドボソースを加える"
                  (ing チポトレチリのアドボソース漬け 3 本 "缶詰")
                  (ing アドボソース 15 ml "缶の漬け汁")
-                 :heat 強め :phase ソースの仕上げ)
-             (op "ローリエを取り除いて捨てる" :heat 強め :phase ソースの仕上げ)
+                 :heat 強め :phase ソース)
+             (op "ローリエを取り除いて捨てる" :heat 強め :phase ソース)
              ;; TODO: 原文では攪拌時に火にかけたままか不明。ここでは火から
              ;; 下ろした扱いにしている(:heat なし)。要確認。
              (op "ソースを攪拌し、小さな塊が少し残る程度のほぼ滑らかな状態にする"
-                 :tool ハンドブレンダー :phase ソースの仕上げ))))
+                 :tool ハンドブレンダー :phase ソース))))
 
     ;; ---- 仕上げ: 2ブランチの合流。最終式 = 完成品 ----
     (-> 完成ソース

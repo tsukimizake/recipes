@@ -32,16 +32,16 @@
             (ing 強力粉 200 g)
             (ing 水 110 g "室温")
             (ing 塩 8.4 g)
-            :phase 本ごね)
+            :phase 生地作り)
         (op "こねコースで表面がなめらかになるまでこねる"
-            :tool パンこね機 :time (10 15 min) :attention :none :phase 本ごね)
+            :tool パンこね機 :time (10 15 min) :attention :none :phase 生地作り)
         (op "乾燥しないように覆って休ませる"
-            :time (10 min) :attention :none :phase 分割前)
-        (op "2等分し、表面を張らせて丸める" :phase 分割)
-        (op "間隔を空けて容器に入れ、乾燥しないように覆う" :phase 最終発酵)
+            :time (10 min) :attention :none :phase 生地作り)
+        (op "2等分し、表面を張らせて丸める" :phase 生地作り)
+        (op "間隔を空けて容器に入れ、乾燥しないように覆う" :phase 発酵)
         (op "室温で最終発酵させる"
             :time (2 3 hour) :attention :none
             :until "生地玉がふっくらし、指で軽く押した跡がゆっくり戻る"
-            :phase 最終発酵)
+            :phase 発酵)
         (op "最終発酵後、冷蔵庫で保存する"
             :attention :none :phase 保存))))

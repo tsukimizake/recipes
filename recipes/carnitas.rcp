@@ -49,20 +49,20 @@
                  :heat :on :time (3.5 hour) :attention :none
                  :until "フォークで簡単にほぐれる" :phase 蒸し煮)
              (op "オレンジの皮・玉ねぎ・にんにく・シナモン・ローリエをトングで取り除いて捨てる"
-                 :phase 水切り)
+                 :phase 仕上げ)
              (split "肉・脂・煮汁をザルに移す"
                     (tool ザル) (tool 計量カップ)
-                    :note "目の細かいザルを1Lの計量カップかボウルに載せる" :phase 水切り)))
+                    :note "目の細かいザルを1Lの計量カップかボウルに載せる" :phase 仕上げ)))
 
         ((水切りした豚肉 煮汁と脂)
          (-> ザルの中身
-             (split "水切りする" :time (10 min) :attention :none :phase 水切り)))
+             (split "水切りする" :time (10 min) :attention :none :phase 仕上げ)))
 
         ((脂 _)
          (-> 煮汁と脂
              (split "表面の脂をすくい取る" :tool 脂分離器
                     :note "煮汁約120ml・脂約120mlになる。煮汁はサルサヴェルデ用に取っておける"
-                    :phase 水切り)))
+                    :phase 仕上げ)))
 
         (調味した豚肉
          (-> 空いた容器
@@ -75,9 +75,9 @@
     (-> 調味した豚肉
         (op "熱源から10cm下の段で、強にしたブロイラーで焼く"
             :heat ブロイラー強 :time (6 min) :attention :partial
-            :until "表面が茶色くカリッとする" :phase ブロイル)
-        (op "取り出してスプーンで混ぜ、新しい面を出す" :phase ブロイル)
+            :until "表面が茶色くカリッとする" :phase 仕上げ)
+        (op "取り出してスプーンで混ぜ、新しい面を出す" :phase 仕上げ)
         (op "再びブロイラーで焼く"
             :heat ブロイラー強 :time (6 min) :attention :partial
-            :until "カリッとする" :phase ブロイル)
-        (op "ホイルをかぶせて保温する" :attention :none :phase ブロイル))))
+            :until "カリッとする" :phase 仕上げ)
+        (op "ホイルをかぶせて保温する" :attention :none :phase 仕上げ))))
