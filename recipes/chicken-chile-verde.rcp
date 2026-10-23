@@ -9,7 +9,7 @@
     (cook-time "25 minutes")
     (time-required "40m")
     (author "J. Kenji López-Alt")
-    (source "Serious Eats"))
+    (source "based on Serious Eats"))
 
   (note "ハンドブレンダーがなければ据え置きのミキサーに移して攪拌する。")
 
