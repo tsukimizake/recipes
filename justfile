@@ -1,6 +1,6 @@
 set shell := ["nu", "-c"]
 
-serve:
+serve: build
     npx -y serve dist -l 8080
 
 index:
