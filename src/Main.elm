@@ -321,8 +321,7 @@ view model =
                 currentName model
     , body =
         List.map Html.toUnstyled
-            [ Html.node "meta" [ Attr.name "viewport", Attr.attribute "content" "width=device-width, initial-scale=1, minimum-scale=0.2" ] []
-            , Css.Global.global
+            [ Css.Global.global
                 [ Css.Global.body
                     [ Css.margin Css.zero
                     , Css.fontFamilies [ "-apple-system", Css.qt "Hiragino Sans", Css.qt "Noto Sans JP", "sans-serif" ]
@@ -330,7 +329,7 @@ view model =
                     , Css.backgroundColor Palette.background
                     ]
                 ]
-            , div [ Attr.css [ Css.property "width" "max-content", Css.minWidth (Css.pct 100) ] ]
+            , div [ Attr.css [ Css.width (Css.pct 100) ] ]
                 [ viewHeader model
                 , div [] [ viewMain model ]
                 ]
@@ -534,6 +533,12 @@ viewSvg done p =
         , SA.height (f p.layout.height)
         , SA.viewBox ("0 0 " ++ f p.layout.width ++ " " ++ f p.layout.height)
         , SA.fontFamily "-apple-system, 'Hiragino Sans', 'Noto Sans JP', sans-serif"
+        , SA.css
+            [ Css.display Css.block
+            , Css.width (Css.pct 100)
+            , Css.maxWidth (Css.px p.layout.width)
+            , Css.height Css.auto
+            ]
         ]
         (defs
             :: List.map (viewEdgePath done) p.layout.edges
