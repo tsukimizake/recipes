@@ -2,20 +2,24 @@ module Main exposing (main)
 
 import Browser
 import Browser.Navigation as Nav
+import Color
 import Content exposing (Content, contentFor, contentHeight, labelLH, labelSize, layoutConfig, padX, padY, sectionGap, smallLH, smallSize)
+import Css
+import Css.Global
 import Dict exposing (Dict)
-import Html exposing (Html, div, h1, li, span, text, ul)
-import Html.Attributes as Attr
-import Html.Events as HE
+import Html.Styled as Html exposing (Html, div, h1, li, span, text, ul)
+import Html.Styled.Attributes as Attr
+import Html.Styled.Events as HE
 import Http
 import Json.Decode as D
 import Layout exposing (Layout)
+import Palette
 import Rcp exposing (Graph, Node, Recipe)
 import Set exposing (Set)
 import Sexp
-import Svg exposing (Svg)
-import Svg.Attributes as SA
-import Svg.Events as SE
+import Svg.Styled as Svg exposing (Svg)
+import Svg.Styled.Attributes as SA
+import Svg.Styled.Events as SE
 import Url exposing (Url)
 import Url.Parser
 import Url.Parser.Query
@@ -316,72 +320,114 @@ view model =
             _ ->
                 currentName model
     , body =
-        [ Html.node "meta" [ Attr.name "viewport", Attr.attribute "content" "width=device-width, initial-scale=1, minimum-scale=0.2" ] []
-        , Html.node "style" [] [ text css ]
-        , div [ Attr.class "app" ]
-            [ viewHeader model
-            , div [ Attr.class "canvas" ] [ viewMain model ]
+        List.map Html.toUnstyled
+            [ Html.node "meta" [ Attr.name "viewport", Attr.attribute "content" "width=device-width, initial-scale=1, minimum-scale=0.2" ] []
+            , Css.Global.global
+                [ Css.Global.body
+                    [ Css.margin Css.zero
+                    , Css.fontFamilies [ "-apple-system", Css.qt "Hiragino Sans", Css.qt "Noto Sans JP", "sans-serif" ]
+                    , Css.color Color.primary
+                    , Css.backgroundColor Palette.background
+                    ]
+                ]
+            , div [ Attr.css [ Css.property "width" "max-content", Css.minWidth (Css.pct 100) ] ]
+                [ viewHeader model
+                , div [] [ viewMain model ]
+                ]
             ]
-        ]
     }
 
 
 viewHeader : Model -> Html Msg
 viewHeader model =
-    let
-        picker =
-            case model.index of
-                IndexLoaded entries ->
-                    Html.select [ HE.onInput SelectRecipe ]
-                        (List.map
-                            (\file ->
-                                Html.option
-                                    [ Attr.value file, Attr.selected (Just file == model.recipeName) ]
-                                    [ text (displayName file) ]
-                            )
-                            entries
-                        )
+    Html.header
+        [ Attr.css
+            [ Css.position Css.sticky
+            , Css.top Css.zero
+            , Css.left Css.zero
+            , Css.zIndex (Css.int 1)
+            , Css.boxSizing Css.borderBox
+            , Css.width (Css.pct 100)
+            , Css.maxWidth (Css.vw 100)
+            , Css.displayFlex
+            , Css.flexWrap Css.wrap
+            , Css.alignItems Css.center
+            , Css.property "gap" "4px 14px"
+            , Css.padding2 (Css.px 6) (Css.px 12)
+            , Css.backgroundColor Palette.background
+            , Css.borderBottom3 (Css.px 1) Css.solid Color.border
+            , Css.fontSize (Css.px 12)
+            ]
+        ]
+        ([ h1 [ Attr.css [ Css.fontSize (Css.px 15), Css.margin Css.zero ] ]
+            [ text
+                (case model.state of
+                    Loaded p ->
+                        Maybe.withDefault (currentName model) (Rcp.metaGet "title" p.recipe)
 
-                IndexLoading ->
-                    text ""
-
-                IndexFailed e ->
-                    span [ Attr.class "warn" ]
-                        [ text ("レシピ一覧を読めません (" ++ e ++ ")。just build で recipes.json を生成してください") ]
-    in
-    case model.state of
-        Loaded p ->
-            let
-                total =
-                    List.length p.graph.nodes
-
-                doneCount =
-                    List.length (List.filter (\n -> Set.member n.id model.done) p.graph.nodes)
-
-                notes =
-                    if List.isEmpty p.recipe.notes then
-                        []
-
-                    else
-                        [ Html.details [ Attr.class "notes" ]
-                            [ Html.summary [] [ text ("メモ " ++ String.fromInt (List.length p.recipe.notes) ++ "件") ]
-                            , ul [] (List.map (\n -> li [] [ text n ]) p.recipe.notes)
-                            ]
-                        ]
-            in
-            Html.header []
-                ([ h1 [] [ text (Maybe.withDefault (currentName model) (Rcp.metaGet "title" p.recipe)) ]
-                 , span [ Attr.class "meta" ] [ text (metaLine p.recipe) ]
-                 ]
-                    ++ notes
-                    ++ [ div [ Attr.class "legend" ] (List.indexedMap legendItem p.phases)
-                       , span [ Attr.class "count" ] [ text (String.fromInt doneCount ++ " / " ++ String.fromInt total ++ " 完了") ]
-                       , picker
-                       ]
+                    _ ->
+                        currentName model
                 )
+            ]
+         ]
+            ++ (case model.state of
+                    Loaded p ->
+                        [ span [ Attr.css [ Css.color Color.secondary ] ] [ text (metaLine p.recipe) ] ]
+                            ++ (if List.isEmpty p.recipe.notes then
+                                    []
 
-        _ ->
-            Html.header [] [ h1 [] [ text (currentName model) ], picker ]
+                                else
+                                    [ Html.details
+                                        [ Attr.css [ Css.Global.withAttribute "open" [ Css.flexBasis (Css.pct 100) ] ] ]
+                                        [ Html.summary [ Attr.css [ Css.cursor Css.pointer, Css.color Color.secondary ] ]
+                                            [ text ("メモ " ++ String.fromInt (List.length p.recipe.notes) ++ "件") ]
+                                        , ul
+                                            [ Attr.css
+                                                [ Css.margin3 (Css.px 4) Css.zero Css.zero
+                                                , Css.paddingLeft (Css.em 1.2)
+                                                , Css.color Color.secondary
+                                                ]
+                                            ]
+                                            (List.map (\n -> li [] [ text n ]) p.recipe.notes)
+                                        ]
+                                    ]
+                               )
+                            ++ [ div
+                                    [ Attr.css [ Css.displayFlex, Css.property "gap" "10px", Css.flexWrap Css.wrap ] ]
+                                    (List.indexedMap legendItem p.phases)
+                               , span []
+                                    [ text
+                                        (String.fromInt (List.length (List.filter (\n -> Set.member n.id model.done) p.graph.nodes))
+                                            ++ " / "
+                                            ++ String.fromInt (List.length p.graph.nodes)
+                                            ++ " 完了"
+                                        )
+                                    ]
+                               ]
+
+                    _ ->
+                        []
+               )
+            ++ [ case model.index of
+                    IndexLoaded entries ->
+                        Html.select [ HE.onInput SelectRecipe, Attr.css [ Css.property "font" "inherit" ] ]
+                            (List.map
+                                (\file ->
+                                    Html.option
+                                        [ Attr.value file, Attr.selected (Just file == model.recipeName) ]
+                                        [ text (displayName file) ]
+                                )
+                                entries
+                            )
+
+                    IndexLoading ->
+                        text ""
+
+                    IndexFailed e ->
+                        span [ Attr.css [ Css.color Color.danger ] ]
+                            [ text ("レシピ一覧を読めません (" ++ e ++ ")。just build で recipes.json を生成してください") ]
+               ]
+        )
 
 
 metaLine : Recipe -> String
@@ -399,8 +445,17 @@ metaLine recipe =
 
 legendItem : Int -> String -> Html Msg
 legendItem i phase =
-    span [ Attr.class "legend-item" ]
-        [ span [ Attr.class "dot", Attr.style "background" (paletteAt i) ] []
+    span [ Attr.css [ Css.display Css.inlineFlex, Css.alignItems Css.center, Css.property "gap" "4px" ] ]
+        [ span
+            [ Attr.css
+                [ Css.width (Css.px 10)
+                , Css.height (Css.px 10)
+                , Css.borderRadius (Css.pct 50)
+                , Css.display Css.inlineBlock
+                , Css.backgroundColor (Palette.phase i)
+                ]
+            ]
+            []
         , text phase
         ]
 
@@ -411,34 +466,23 @@ viewMain model =
         Idle ->
             case model.index of
                 IndexLoaded [] ->
-                    div [ Attr.class "error" ] [ text "recipes/ に .rcp ファイルがありません" ]
+                    div [ Attr.css [ Css.padding (Css.px 20), Css.color Color.danger, Css.whiteSpace Css.preWrap ] ]
+                        [ text "recipes/ に .rcp ファイルがありません" ]
 
                 IndexFailed e ->
-                    div [ Attr.class "error" ] [ text e ]
+                    div [ Attr.css [ Css.padding (Css.px 20), Css.color Color.danger, Css.whiteSpace Css.preWrap ] ] [ text e ]
 
                 _ ->
-                    div [ Attr.class "status" ] [ text "読み込み中…" ]
+                    div [ Attr.css [ Css.padding (Css.px 20), Css.color Color.secondary ] ] [ text "読み込み中…" ]
 
         Loading ->
-            div [ Attr.class "status" ] [ text "読み込み中…" ]
+            div [ Attr.css [ Css.padding (Css.px 20), Css.color Color.secondary ] ] [ text "読み込み中…" ]
 
         Failed e ->
-            div [ Attr.class "error" ] [ text e ]
+            div [ Attr.css [ Css.padding (Css.px 20), Css.color Color.danger, Css.whiteSpace Css.preWrap ] ] [ text e ]
 
         Loaded p ->
             viewSvg model.done p
-
-
-palette : List String
-palette =
-    [ "#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4", "#008300", "#4a3aa7", "#e34948" ]
-
-
-paletteAt : Int -> String
-paletteAt i =
-    List.drop (modBy (List.length palette) i) palette
-        |> List.head
-        |> Maybe.withDefault "#52514e"
 
 
 phaseColor : List String -> Maybe String -> String
@@ -452,7 +496,7 @@ phaseColor phases phase =
                 |> List.indexedMap Tuple.pair
                 |> List.filter (\( _, p ) -> p == ph)
                 |> List.head
-                |> Maybe.map (Tuple.first >> paletteAt)
+                |> Maybe.map (Tuple.first >> Palette.phase >> .value)
                 |> Maybe.withDefault "#7a7975"
 
 
@@ -463,12 +507,12 @@ inkDim =
 
 inkPrimary : String
 inkPrimary =
-    "#0b0b0b"
+    Color.primary.value
 
 
 inkSecondary : String
 inkSecondary =
-    "#52514e"
+    Color.secondary.value
 
 
 strokeDim : String
@@ -769,7 +813,7 @@ viewNode done p node =
             in
             Svg.g
                 [ SE.onClick (ToggleDone node.id)
-                , SA.style "cursor: pointer"
+                , SA.css [ Css.cursor Css.pointer ]
                 , SA.transform ("translate(" ++ f placed.x ++ "," ++ f placed.y ++ ")")
                 ]
                 (rect
@@ -818,24 +862,3 @@ viewFinal final =
 f : Float -> String
 f =
     String.fromFloat
-
-
-css : String
-css =
-    """
-body { margin: 0; font-family: -apple-system, "Hiragino Sans", "Noto Sans JP", sans-serif; color: #0b0b0b; background: #fcfcfb; }
-.app { width: max-content; min-width: 100%; }
-header { position: sticky; top: 0; left: 0; z-index: 1; box-sizing: border-box; width: 100%; max-width: 100vw; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px; padding: 6px 12px; background: #fcfcfb; border-bottom: 1px solid #e5e4e0; font-size: 12px; }
-h1 { font-size: 15px; margin: 0; }
-.meta { color: #52514e; }
-.notes summary { cursor: pointer; color: #52514e; }
-.notes[open] { flex-basis: 100%; }
-.notes ul { margin: 4px 0 0; padding-left: 1.2em; color: #52514e; }
-.legend { display: flex; gap: 10px; flex-wrap: wrap; }
-.legend-item { display: inline-flex; align-items: center; gap: 4px; }
-.dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
-.status { padding: 20px; color: #52514e; }
-.error { padding: 20px; color: #d03b3b; white-space: pre-wrap; }
-.warn { color: #d03b3b; }
-select { font: inherit; }
-"""
