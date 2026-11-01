@@ -5,7 +5,7 @@ import Browser.Navigation as Nav
 import Content exposing (Content, contentFor, contentHeight, labelLH, labelSize, layoutConfig, padX, padY, sectionGap, smallLH, smallSize)
 import Dict exposing (Dict)
 import Html exposing (Html, div, h1, li, span, text, ul)
-import Html.Attributes as HA
+import Html.Attributes as Attr
 import Html.Events as HE
 import Http
 import Json.Decode as D
@@ -316,10 +316,11 @@ view model =
             _ ->
                 currentName model
     , body =
-        [ Html.node "style" [] [ text css ]
-        , div [ HA.class "app" ]
+        [ Html.node "meta" [ Attr.name "viewport", Attr.attribute "content" "width=device-width, initial-scale=1, minimum-scale=0.2" ] []
+        , Html.node "style" [] [ text css ]
+        , div [ Attr.class "app" ]
             [ viewHeader model
-            , div [ HA.class "canvas" ] [ viewMain model ]
+            , div [ Attr.class "canvas" ] [ viewMain model ]
             ]
         ]
     }
@@ -335,7 +336,7 @@ viewHeader model =
                         (List.map
                             (\file ->
                                 Html.option
-                                    [ HA.value file, HA.selected (Just file == model.recipeName) ]
+                                    [ Attr.value file, Attr.selected (Just file == model.recipeName) ]
                                     [ text (displayName file) ]
                             )
                             entries
@@ -345,7 +346,7 @@ viewHeader model =
                     text ""
 
                 IndexFailed e ->
-                    span [ HA.class "warn" ]
+                    span [ Attr.class "warn" ]
                         [ text ("レシピ一覧を読めません (" ++ e ++ ")。just build で recipes.json を生成してください") ]
     in
     case model.state of
@@ -362,7 +363,7 @@ viewHeader model =
                         []
 
                     else
-                        [ Html.details [ HA.class "notes" ]
+                        [ Html.details [ Attr.class "notes" ]
                             [ Html.summary [] [ text ("メモ " ++ String.fromInt (List.length p.recipe.notes) ++ "件") ]
                             , ul [] (List.map (\n -> li [] [ text n ]) p.recipe.notes)
                             ]
@@ -370,11 +371,11 @@ viewHeader model =
             in
             Html.header []
                 ([ h1 [] [ text (Maybe.withDefault (currentName model) (Rcp.metaGet "title" p.recipe)) ]
-                 , span [ HA.class "meta" ] [ text (metaLine p.recipe) ]
+                 , span [ Attr.class "meta" ] [ text (metaLine p.recipe) ]
                  ]
                     ++ notes
-                    ++ [ div [ HA.class "legend" ] (List.indexedMap legendItem p.phases)
-                       , span [ HA.class "count" ] [ text (String.fromInt doneCount ++ " / " ++ String.fromInt total ++ " 完了") ]
+                    ++ [ div [ Attr.class "legend" ] (List.indexedMap legendItem p.phases)
+                       , span [ Attr.class "count" ] [ text (String.fromInt doneCount ++ " / " ++ String.fromInt total ++ " 完了") ]
                        , picker
                        ]
                 )
@@ -398,8 +399,8 @@ metaLine recipe =
 
 legendItem : Int -> String -> Html Msg
 legendItem i phase =
-    span [ HA.class "legend-item" ]
-        [ span [ HA.class "dot", HA.style "background" (paletteAt i) ] []
+    span [ Attr.class "legend-item" ]
+        [ span [ Attr.class "dot", Attr.style "background" (paletteAt i) ] []
         , text phase
         ]
 
@@ -410,19 +411,19 @@ viewMain model =
         Idle ->
             case model.index of
                 IndexLoaded [] ->
-                    div [ HA.class "error" ] [ text "recipes/ に .rcp ファイルがありません" ]
+                    div [ Attr.class "error" ] [ text "recipes/ に .rcp ファイルがありません" ]
 
                 IndexFailed e ->
-                    div [ HA.class "error" ] [ text e ]
+                    div [ Attr.class "error" ] [ text e ]
 
                 _ ->
-                    div [ HA.class "status" ] [ text "読み込み中…" ]
+                    div [ Attr.class "status" ] [ text "読み込み中…" ]
 
         Loading ->
-            div [ HA.class "status" ] [ text "読み込み中…" ]
+            div [ Attr.class "status" ] [ text "読み込み中…" ]
 
         Failed e ->
-            div [ HA.class "error" ] [ text e ]
+            div [ Attr.class "error" ] [ text e ]
 
         Loaded p ->
             viewSvg model.done p
@@ -586,7 +587,7 @@ viewEdgeLabel done outDeg inDeg e =
                 , SA.stroke "#fcfcfb"
                 , SA.strokeWidth "3"
                 , SA.strokeLinejoin "round"
-                , HA.attribute "paint-order" "stroke"
+                , Attr.attribute "paint-order" "stroke"
                 ]
                 [ Svg.text label ]
         )
