@@ -3,7 +3,7 @@ module Main exposing (main)
 import Browser
 import Browser.Navigation as Nav
 import Color
-import Content exposing (Content, contentFor, contentHeight, labelLH, labelSize, layoutConfig, padX, padY, sectionGap, smallLH, smallSize)
+import Content exposing (Content, actionLH, actionSize, contentFor, contentHeight, layoutConfig, padX, padY, sectionGap, smallLH, smallSize)
 import Css
 import Css.Global
 import Dict exposing (Dict)
@@ -791,11 +791,21 @@ viewNode done p node =
                         ( y, acc )
 
                     else
-                        List.foldl (textLine size weight fill lh) ( y + sectionGap, acc ) lines
+                        List.foldl (textLine size weight fill lh)
+                            ( if List.isEmpty acc then
+                                y
+
+                              else
+                                y + sectionGap
+                            , acc
+                            )
+                            lines
 
                 ( _, textsRev ) =
-                    List.foldl (textLine labelSize "600" ink labelLH) ( padY, [] ) content.label
-                        |> sectionLines smallSize "normal" ink2 smallLH content.items
+                    ( padY, [] )
+                        |> sectionLines smallSize "normal" ink2 smallLH content.ingredients
+                        |> sectionLines actionSize "600" ink actionLH content.action
+                        |> sectionLines smallSize "normal" ink2 smallLH content.tools
                         |> sectionLines smallSize "normal" ink smallLH content.badges
                         |> sectionLines smallSize "normal" ink2 smallLH content.detail
 

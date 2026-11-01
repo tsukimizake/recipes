@@ -38,7 +38,7 @@ type Expr
 
 
 type alias OpForm =
-    { label : String
+    { action : String
     , inputs : List Expr
     , annots : Annots
     }
@@ -179,11 +179,11 @@ expr d =
         L [ Sym "tool", Sym name ] ->
             Ok (ToolE name)
 
-        L ((Sym "op") :: (Str label) :: rest) ->
-            Result.map OpE (opForm label rest)
+        L ((Sym "op") :: (Str action) :: rest) ->
+            Result.map OpE (opForm action rest)
 
-        L ((Sym "split") :: (Str label) :: rest) ->
-            Result.map SplitE (opForm label rest)
+        L ((Sym "split") :: (Str action) :: rest) ->
+            Result.map SplitE (opForm action rest)
 
         L ((Sym "->") :: first :: forms) ->
             expr first
@@ -215,12 +215,12 @@ threadStep formD acc =
 
 
 opForm : String -> List Datum -> Result String OpForm
-opForm label rest =
+opForm action rest =
     let
         ( positional, annotDatums ) =
             span (not << isKw) rest
     in
-    Result.map2 (OpForm label)
+    Result.map2 (OpForm action)
         (collect expr positional)
         (annotations annotDatums)
 
@@ -365,7 +365,7 @@ qtyValue q =
 
 type alias Node =
     { id : Int
-    , label : String
+    , action : String
     , items : List Item
     , annots : Annots
     }
@@ -565,20 +565,15 @@ buildNode form b0 =
                 let
                     id =
                         b.nextId
-
-                    node =
-                        { id = id
-                        , label = form.label
-                        , items = List.reverse items
-                        , annots = form.annots
-                        }
                 in
                 ( VNode id
-                , { b
-                    | nextId = id + 1
-                    , nodes = node :: b.nodes
-                    , edges = List.map (\( from, lbl ) -> Edge from id lbl) incoming ++ b.edges
-                  }
+                , Builder
+                    (id + 1)
+                    (Node id form.action (List.reverse items) form.annots :: b.nodes)
+                    (List.map (\( from, label ) -> Edge from id label) incoming ++ b.edges)
+                    b.memo
+                    b.inProgress
+                    b.defs
                 )
             )
 

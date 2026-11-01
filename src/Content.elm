@@ -1,12 +1,13 @@
-module Content exposing (Content, contentFor, contentHeight, labelLH, labelSize, layoutConfig, nodeW, padX, padY, sectionGap, smallLH, smallSize)
+module Content exposing (Content, actionLH, actionSize, contentFor, contentHeight, layoutConfig, nodeW, padX, padY, sectionGap, smallLH, smallSize)
 
 import Layout
 import Rcp exposing (Node)
 
 
 type alias Content =
-    { label : List String
-    , items : List String
+    { ingredients : List String
+    , action : List String
+    , tools : List String
     , badges : List String
     , detail : List String
     }
@@ -27,8 +28,8 @@ padY =
     10
 
 
-labelSize : Float
-labelSize =
+actionSize : Float
+actionSize =
     14
 
 
@@ -37,8 +38,8 @@ smallSize =
     11.5
 
 
-labelLH : Float
-labelLH =
+actionLH : Float
+actionLH =
     20
 
 
@@ -60,103 +61,107 @@ layoutConfig =
 contentFor : Node -> Content
 contentFor node =
     let
-        labelUnits =
-            (nodeW - 2 * padX) / labelSize
-
         smallUnits =
             (nodeW - 2 * padX) / smallSize
-
-        a =
-            node.annots
-
-        badges =
-            List.filterMap identity
-                [ Maybe.map (\t -> "⏱ " ++ t) a.time
-                , Maybe.map attentionText a.attention
-                , Maybe.map heatText a.heat
-                , Maybe.map (\t -> "🔧 " ++ t) a.tool
-                ]
     in
-    { label = wrap labelUnits node.label
-    , items = List.concatMap (itemText >> wrap smallUnits) node.items
-    , badges =
-        if List.isEmpty badges then
-            []
+    Content
+        (List.concatMap
+            (\item ->
+                case item of
+                    Rcp.IngItem ing ->
+                        wrap smallUnits
+                            ("・"
+                                ++ ing.name
+                                ++ (case ( ing.qty, ing.unit ) of
+                                        ( Just qty, Just unit ) ->
+                                            " " ++ qty ++ " " ++ unit
 
-        else
-            wrap smallUnits (String.join "\u{3000}" badges)
-    , detail =
-        List.filterMap identity
-            [ Maybe.map (\u -> "→ " ++ u) a.until
-            , Maybe.map (\n -> "※ " ++ n) a.note
-            ]
-            |> List.concatMap (wrap smallUnits)
-    }
+                                        _ ->
+                                            ""
+                                   )
+                                ++ (case ing.note of
+                                        Just note ->
+                                            "（" ++ note ++ "）"
 
+                                        Nothing ->
+                                            ""
+                                   )
+                            )
 
-attentionText : String -> String
-attentionText s =
-    case s of
-        "full" ->
-            "かかりきり"
+                    Rcp.ToolItem _ ->
+                        []
+            )
+            node.items
+        )
+        (wrap ((nodeW - 2 * padX) / actionSize) node.action)
+        (List.concatMap
+            (\item ->
+                case item of
+                    Rcp.ToolItem name ->
+                        wrap smallUnits ("▢ " ++ name)
 
-        "partial" ->
-            "ときどき"
+                    Rcp.IngItem _ ->
+                        []
+            )
+            node.items
+        )
+        (List.filterMap identity
+            [ Maybe.map (\time -> "⏱ " ++ time) node.annots.time
+            , Maybe.map
+                (\attention ->
+                    case attention of
+                        "full" ->
+                            "かかりきり"
 
-        "none" ->
-            "放置"
+                        "partial" ->
+                            "ときどき"
 
-        _ ->
-            s
-
-
-heatText : String -> String
-heatText s =
-    if s == "on" then
-        "🔥"
-
-    else
-        "🔥 " ++ s
-
-
-itemText : Rcp.Item -> String
-itemText item =
-    case item of
-        Rcp.ToolItem name ->
-            "▢ " ++ name
-
-        Rcp.IngItem ing ->
-            let
-                qty =
-                    case ( ing.qty, ing.unit ) of
-                        ( Just q, Just u ) ->
-                            " " ++ q ++ " " ++ u
+                        "none" ->
+                            "放置"
 
                         _ ->
-                            ""
+                            attention
+                )
+                node.annots.attention
+            , Maybe.map
+                (\heat ->
+                    if heat == "on" then
+                        "🔥"
 
-                note =
-                    case ing.note of
-                        Just n ->
-                            "（" ++ n ++ "）"
-
-                        Nothing ->
-                            ""
-            in
-            "・" ++ ing.name ++ qty ++ note
+                    else
+                        "🔥 " ++ heat
+                )
+                node.annots.heat
+            , Maybe.map (\tool -> "🔧 " ++ tool) node.annots.tool
+            ]
+            |> String.join "\u{3000}"
+            |> wrap smallUnits
+        )
+        (List.filterMap identity
+            [ Maybe.map (\until -> "→ " ++ until) node.annots.until
+            , Maybe.map (\note -> "※ " ++ note) node.annots.note
+            ]
+            |> List.concatMap (wrap smallUnits)
+        )
 
 
 contentHeight : Content -> Float
 contentHeight c =
     let
-        section lines =
-            if List.isEmpty lines then
-                0
-
-            else
-                sectionGap + smallLH * toFloat (List.length lines)
+        sections =
+            [ ( smallLH, c.ingredients )
+            , ( actionLH, c.action )
+            , ( smallLH, c.tools )
+            , ( smallLH, c.badges )
+            , ( smallLH, c.detail )
+            ]
+                |> List.filter (Tuple.second >> List.isEmpty >> not)
     in
-    padY * 2 + labelLH * toFloat (List.length c.label) + section c.items + section c.badges + section c.detail
+    padY
+        * 2
+        + List.sum (List.map (\( lineHeight, lines ) -> lineHeight * toFloat (List.length lines)) sections)
+        + sectionGap
+        * toFloat (max 0 (List.length sections - 1))
 
 
 {-| 全角を1、それ以外を0.55単位として貪欲に折り返す。
